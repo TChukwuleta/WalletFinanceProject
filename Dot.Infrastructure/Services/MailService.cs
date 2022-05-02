@@ -72,6 +72,41 @@ namespace Dot.Infrastructure.Services
             }
         }
 
+        public async Task<bool> SendSaveBuddyAsync(MailSaveBuddyRequest mailRequest)
+        {
+            try
+            {
+                string filePath = Directory.GetCurrentDirectory() + "\\Templates\\WelcomeTemplate.html";
+                StreamReader str = new StreamReader(filePath);
+                string mailText = str.ReadToEnd();
+                str.Close();
+                mailText = mailText.Replace("[username]", mailRequest.Email).Replace("[email]", mailRequest.Email);
+                var email = new MimeMessage();
+                email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+                email.To.Add(MailboxAddress.Parse(mailRequest.Email));
+                email.Subject = "You Got A Group Savings Invite";
+                var builder = new BodyBuilder();
+                builder.HtmlBody = mailText;
+                email.Body = builder.ToMessageBody();
+                builder.HtmlBody = mailRequest.Description;
+                email.Body = builder.ToMessageBody();
+                using (var smtp = new SmtpClient())
+                {
+                    smtp.CheckCertificateRevocation = false;
+                    await smtp.ConnectAsync(_config["MailSettings:Host"], 465, true); //MailKit.Security.SecureSocketOptions.SslOnConnect);
+                    await smtp.AuthenticateAsync(_mailSettings.Mail, _mailSettings.Password);
+                    await smtp.SendAsync(email);
+                    await smtp.DisconnectAsync(true);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public async Task<bool> SendWelcomeEmailAsync(WelcomeRequest mailRequest)
         {
             try

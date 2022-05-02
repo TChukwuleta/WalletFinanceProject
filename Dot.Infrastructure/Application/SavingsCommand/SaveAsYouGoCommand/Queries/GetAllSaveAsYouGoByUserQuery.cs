@@ -8,22 +8,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dot.Infrastructure.Application.WalletQueries
+namespace Dot.Infrastructure.Application.SavingsCommand.SaveAsYouGoCommand.Queries
 {
-    public class GetWalletBalance : IRequest<ResultResponse>
+    public class GetAllSaveAsYouGoByUserQuery : IRequest<ResultResponse>
     {
         public string UserId { get; set; }
         public string StudentId { get; set; }
     }
 
-    public class GetWalletBalanceHandler : IRequestHandler<GetWalletBalance, ResultResponse>
+    public class GetAllSaveAsYouGoByUserQueryHandler : IRequestHandler<GetAllSaveAsYouGoByUserQuery, ResultResponse>
     {
         private readonly ApplicationDbContext _context;
-        public GetWalletBalanceHandler(ApplicationDbContext context)
+        public GetAllSaveAsYouGoByUserQueryHandler(ApplicationDbContext context)
         {
             _context = context;
         }
-        public async Task<ResultResponse> Handle(GetWalletBalance request, CancellationToken cancellationToken)
+        public async Task<ResultResponse> Handle(GetAllSaveAsYouGoByUserQuery request, CancellationToken cancellationToken)
         {
             try
             {
@@ -32,14 +32,17 @@ namespace Dot.Infrastructure.Application.WalletQueries
                 {
                     return ResultResponse.Failure("Invalid active user");
                 }
-                var userWallet = await _context.Wallets.FirstOrDefaultAsync(c => c.UserId == request.UserId && c.StudentId == request.StudentId);
-                if (userWallet == null)
+
+                var saveAsYouGo = await _context.Savings.Where(
+                    c => c.UserId == request.UserId &&
+                    c.StudentId == request.StudentId
+                    && c.SavingsType == Core.Enums.SavingsType.SaveAsYouGo).ToListAsync();
+                if (saveAsYouGo == null)
                 {
-                    return ResultResponse.Failure("Invalid wallet user specified");
+                    return ResultResponse.Failure("YOu don't hav any 'Save as you go' Savings");
                 }
 
-                // Get balance from third party
-                return ResultResponse.Success(userWallet.Balance);
+                return ResultResponse.Success(saveAsYouGo);
             }
             catch (Exception ex)
             {

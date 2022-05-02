@@ -37,8 +37,8 @@ namespace Dot.Infrastructure.Application.RequestCommand
         {
             try
             {
-                var findUser = await _context.Students.FirstOrDefaultAsync(c => c.UserId == request.UserId);
-                if (findUser == null || findUser.Status != Core.Enums.Status.Active)
+                var findUser = await _context.Students.FirstOrDefaultAsync(c => c.UserId == request.UserId && c.Status == Core.Enums.Status.Active);
+                if (findUser == null)
                 {
                     return ResultResponse.Failure("Invalid active user");
                 }

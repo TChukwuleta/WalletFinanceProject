@@ -20,5 +20,7 @@ namespace Dot.Infrastructure.Data
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<RequestModel> RequestModels { get; set; }
+        public DbSet<Saving> Savings { get; set; }
+        public DbSet<RequestBuddy> RequestBuddies { get; set; }
     }
 }
