@@ -5,15 +5,12 @@ using Dot.Core.Enums;
 using Dot.Core.ViewModels;
 using Dot.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Dot.Infrastructure.Services
 {
@@ -36,7 +33,7 @@ namespace Dot.Infrastructure.Services
             try
             {
                 var user = await _userManager.FindByEmailAsync(email);
-                if(user == null)
+                if (user == null)
                 {
                     return ResultResponse.Failure("User does not exist");
                 }
@@ -70,7 +67,7 @@ namespace Dot.Infrastructure.Services
             try
             {
                 var existingUser = await _userManager.FindByEmailAsync(user.Email);
-                if(existingUser != null)
+                if (existingUser != null)
                 {
                     return ResultResponse.Failure("User with that email already exist");
                 }
@@ -88,7 +85,7 @@ namespace Dot.Infrastructure.Services
                     CreatedDate = DateTime.Now,
                     UserName = user.Email
                 };
-                if(user.Email != null)
+                if (user.Email != null)
                 {
                     newUser.EmailConfirmed = true;
                     newUser.Email = user.Email;
@@ -108,14 +105,15 @@ namespace Dot.Infrastructure.Services
                 var student = new Student
                 {
                     FirstName = user.FirstName,
-                    LastName = user.LastName, 
+                    LastName = user.LastName,
                     Email = user.Email,
                     StudentID = user.StudentID,
                     Address = user.Address,
                     Gender = user.Gender,
                     GenderDesc = user.Gender.ToString(),
                     UserId = newUser.Id,
-                    Status = Status.Active
+                    Status = Status.Active,
+                    SchoolName = user.SchoolName
                 };
 
                 await _context.Students.AddAsync(student);
@@ -131,7 +129,7 @@ namespace Dot.Infrastructure.Services
                 {
                     return ResultResponse.Failure("Cannot create user");
                 }
-                
+
 
                 return ResultResponse.Success("User has been succwssfully created", student);
             }
@@ -142,9 +140,63 @@ namespace Dot.Infrastructure.Services
             }
         }
 
-        public Task<ResultResponse> ForgotPassword(string email)
+        public async Task<ResultResponse> GenerateOTP(string email)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    throw new Exception("User with that details was not found");
+                }
+
+                var otp = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+                if (otp == null)
+                {
+                    throw new Exception("Unable to create OTP");
+                }
+
+                var resetPasswordRequest = new ResetPassword
+                {
+                    token = otp,
+                    email = user.Email
+                };
+
+                var sendEmail = await _mailService.ResetPasswordAsync(resetPasswordRequest);
+                if (!sendEmail)
+                {
+                    throw new Exception("Error occured while reseting user password");
+                }
+                return ResultResponse.Success(otp);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public Task<ResultResponse> GenerateToken(string email)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<ResultResponse> GetUserByEmail(string email)
+        {
+            try
+            {
+                var findUser = await _context.Students.FirstOrDefaultAsync(x => x.Email == email);
+                if (findUser == null)
+                {
+                    throw new Exception("Student with this mail does not exist");
+                }
+                return ResultResponse.Success(findUser);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public async Task<ResultResponse> loginAsync(string email, string password)
@@ -152,7 +204,7 @@ namespace Dot.Infrastructure.Services
             try
             {
                 var user = await _userManager.FindByEmailAsync(email);
-                if(user == null)
+                if (user == null)
                 {
                     return ResultResponse.Failure("Invalid login details");
                 }
@@ -169,7 +221,7 @@ namespace Dot.Infrastructure.Services
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
 
@@ -178,6 +230,59 @@ namespace Dot.Infrastructure.Services
             throw new NotImplementedException();
         }
 
+        /*public async Task<string> UploadFile(string name, string userid)
+        {
+            try
+            {
+                *//*string filePath = Directory.GetCurrentDirectory() + $"\\{file.Name}_{file.UserId}.jpg";
+                Account account = new Account { ApiKey = _config["cloudinary:key"], ApiSecret = _config["cloudinary:secret"], Cloud = _config["cloudinary:cloudname"] };
+                Cloudinary cloudinary = new Cloudinary(account);
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(filePath)
+                };
+
+                var uploadResult = cloudinary.Upload(uploadParams);
+                string fileUrl = uploadResult.SecureUri.AbsoluteUri;
+
+                return fileUrl;*//*
+                return "";
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }*/
+
+        public async Task<bool> validateOTP(string email, string otp, string password)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                var validate = await _userManager.VerifyTwoFactorTokenAsync(user, "Email", otp);
+                if (!validate)
+                {
+                    return false;
+                }
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var res = await _userManager.ResetPasswordAsync(user, token, password);
+                if (res.Succeeded)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
 
         private string GenerateJwtToken(string UserId, string email)
         {

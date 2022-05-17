@@ -22,5 +22,7 @@ namespace Dot.Infrastructure.Data
         public DbSet<RequestModel> RequestModels { get; set; }
         public DbSet<Saving> Savings { get; set; }
         public DbSet<RequestBuddy> RequestBuddies { get; set; }
+        public DbSet<School> Schools { get; set; }
+        public DbSet<Barcode> Barcodes { get; set; }
     }
 }

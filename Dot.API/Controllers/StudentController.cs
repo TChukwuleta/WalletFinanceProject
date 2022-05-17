@@ -2,6 +2,7 @@
 using Dot.Application.ResponseModel;
 using Dot.Application.UserCommand.ChangeUserPassword;
 using Dot.Application.UserCommand.CreateUser;
+using Dot.Application.UserCommand.ForgotPassword;
 using Dot.Application.UserCommand.LoginUser;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,35 @@ namespace Dot.API.Controllers
             {
 
                 throw; 
+            }
+        }
+
+
+        [HttpPost("forgotpassword")]
+        public async Task<ActionResult<ResultResponse>> ForgotPassword(CreateForgotPasswordCommand command)
+        {
+            try
+            {
+                return await Mediator.Send(command);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost("forgotpasswordvalidation")]
+        public async Task<ActionResult<ResultResponse>> ForgotPasswordValidation(ValidateForgotPasswordCommand command)
+        {
+            try
+            {
+                return await Mediator.Send(command);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
             }
         }
 

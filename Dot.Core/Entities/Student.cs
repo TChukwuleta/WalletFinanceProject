@@ -15,6 +15,7 @@ namespace Dot.Core.Entities
         public string Address { get; set; }
         public string StudentID { get; set; }
         public string Email { get; set; }
+        public string SchoolName { get; set; }
         public Gender Gender { get; set; }
         public string GenderDesc { get; set; }
         public string UserId { get; set; }

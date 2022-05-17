@@ -21,6 +21,40 @@ namespace Dot.Infrastructure.Services
             _mailSettings = mailSettings.Value;
             _config = config;
         }
+
+        public async Task<bool> ResetPasswordAsync(ResetPassword mailRequest)
+        {
+            try
+            {
+                string filePath = Directory.GetCurrentDirectory() + "\\Templates\\resetpassword.html";
+                StreamReader str = new StreamReader(filePath);
+                string mailText = str.ReadToEnd();
+                str.Close();
+                mailText = mailText.Replace("[otp]", mailRequest.token);
+                var email = new MimeMessage();
+                email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+                email.To.Add(MailboxAddress.Parse(mailRequest.email));
+                email.Subject = "Password Reset - Dot";
+                var builder = new BodyBuilder();
+                builder.HtmlBody = mailText;
+                email.Body = builder.ToMessageBody();
+                using (var smtp = new SmtpClient())
+                {
+                    smtp.CheckCertificateRevocation = false;
+                    await smtp.ConnectAsync(_config["MailSettings:Host"], 465, true); //MailKit.Security.SecureSocketOptions.SslOnConnect);
+                    await smtp.AuthenticateAsync(_mailSettings.Mail, _mailSettings.Password);
+                    await smtp.SendAsync(email);
+                    await smtp.DisconnectAsync(true);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public async Task<bool> SendRequestEmailAsync(MailRequest mailRequest)
         {
             try

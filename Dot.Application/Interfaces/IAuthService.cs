@@ -1,10 +1,6 @@
 ﻿using Dot.Application.ResponseModel;
 using Dot.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Dot.Core.ViewModels;
 
 namespace Dot.Application.Interfaces
 {
@@ -14,7 +10,10 @@ namespace Dot.Application.Interfaces
         Task<ResultResponse> loginAsync(string email, string password);
         Task<ResultResponse> ChangeUserStatusAsync(User user);
         Task<ResultResponse> ChangePasswordAsync(string email, string oldPassword, string newPassword);
-        Task<ResultResponse> ForgotPassword(string email);
+        Task<ResultResponse> GenerateOTP(string email);
+        Task<ResultResponse> GenerateToken(string email);
+        Task<bool> validateOTP(string email, string otp, string password);
         Task<ResultResponse> ResetPassword(string email, string password);
+        Task<ResultResponse> GetUserByEmail(string email);
     }
 }

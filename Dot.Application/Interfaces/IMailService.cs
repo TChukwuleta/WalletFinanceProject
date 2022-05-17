@@ -12,5 +12,6 @@ namespace Dot.Application.Interfaces
         Task<bool> SendRequestEmailAsync(MailRequest mailRequest);
         Task<bool> SendWelcomeEmailAsync(WelcomeRequest mailRequest);
         Task<bool> SendSaveBuddyAsync(MailSaveBuddyRequest mailRequest);
+        Task<bool> ResetPasswordAsync(ResetPassword mailRequest);
     }
 }

@@ -19,6 +19,7 @@ namespace Dot.Application.UserCommand.CreateUser
         public string Address { get; set; }
         public string StudentID { get; set; }
         public string Email { get; set; }
+        public string SchoolName { get; set; }
         public Gender Gender { get; set; }
     }
 
@@ -41,7 +42,8 @@ namespace Dot.Application.UserCommand.CreateUser
                     Address = request.Address,
                     StudentID = request.StudentID,
                     Email = request.Email,
-                    Gender = request.Gender
+                    Gender = request.Gender,
+                    SchoolName = request.SchoolName
                 };
 
                 var result = await _authService.CreateUserAsync(newUser);

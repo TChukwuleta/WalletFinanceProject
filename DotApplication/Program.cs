@@ -2,6 +2,7 @@ using Dot.Application.Interfaces;
 using Dot.Application.UserCommand.CreateUser;
 using Dot.Core.Entities;
 using Dot.Core.ViewModels;
+using Dot.Infrastructure.Application.BarcodeCommand.Commands;
 using Dot.Infrastructure.Data;
 using Dot.Infrastructure.Services;
 using MediatR;
@@ -19,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 /*builder.Services.AddMediatR(typeof(Program).Assembly);*/
 builder.Services.AddMediatR(typeof(CreateUserCommandHandler).Assembly);
+builder.Services.AddMediatR(typeof(GenerateBarcodeCommandHandler).Assembly);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 /*builder.Services.AddSwaggerGen();*/
@@ -76,18 +78,21 @@ builder.Services.AddAuthentication(options =>
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
 
 
 builder.Services.AddScoped<IRepository, EntityRepository>();
 builder.Services.AddScoped<IRepositoryReadOnly, EntityRepositoryReadOnly>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-/*if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -97,9 +102,9 @@ if (app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}*/
-app.UseSwagger();
-app.UseSwaggerUI();
+}
+/*app.UseSwagger();
+app.UseSwaggerUI();*/
 
 /*app.UseEndpoints(endpoints =>
 {
