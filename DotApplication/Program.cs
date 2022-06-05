@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 /*builder.Services.AddMediatR(typeof(Program).Assembly);*/
-builder.Services.AddMediatR(typeof(CreateUserCommandHandler).Assembly);
+builder.Services.AddMediatR(typeof(CreateStudentCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(GenerateBarcodeCommandHandler).Assembly);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -55,6 +55,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+builder.Services.AddCors(options => options.AddPolicy("CorsApp", builder =>
+{
+    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+}));
 
 builder.Services.AddAuthentication(options =>
 {
@@ -103,6 +108,7 @@ if (app.Environment.IsProduction())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("CorsApp");
 /*app.UseSwagger();
 app.UseSwaggerUI();*/
 

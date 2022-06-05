@@ -22,5 +22,8 @@ namespace Dot.Core.Entities
         public string Narration { get; set; }
         public string TransactionReference { get; set; }
         public DateTime TransactionDate { get; set; }
+        public int ParentId { get; set; }
+        public UserType UserType { get; set; }
+        public MerchantPaymentType MerchantPaymentType { get; set; }
     }
 }

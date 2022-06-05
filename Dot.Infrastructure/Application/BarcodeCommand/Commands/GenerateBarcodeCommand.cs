@@ -44,13 +44,13 @@ namespace Dot.Infrastructure.Application.BarcodeCommand.Commands
                 }
 
 
-                /*var findUserBarcode = await _context.Barcodes.FirstOrDefaultAsync(a => a.UserId == request.UserId && a.StudentId == request.StudentId);    
-                if(findUserBarcode != null)
+                var findUserBarcode = await _context.Barcodes.FirstOrDefaultAsync(a => a.UserId == request.UserId && a.StudentId == request.StudentId);
+                if (findUserBarcode != null)
                 {
                     return ResultResponse.Success(findUserBarcode);
-                }*/
+                }
 
-                var walletUser = await _context.Wallets.FirstOrDefaultAsync(v => v.UserId == request.UserId && v.StudentId == request.StudentId);
+                var walletUser = await _context.Wallets.FirstOrDefaultAsync(v => v.UserId == request.UserId);
                 if(walletUser == null)
                 {
                     return ResultResponse.Failure("Please create a wallet");

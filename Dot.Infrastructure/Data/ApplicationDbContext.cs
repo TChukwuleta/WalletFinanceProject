@@ -1,4 +1,5 @@
 ﻿using Dot.Core.Entities;
+using Dot.Core.Entities.MerchantSide;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,5 +25,6 @@ namespace Dot.Infrastructure.Data
         public DbSet<RequestBuddy> RequestBuddies { get; set; }
         public DbSet<School> Schools { get; set; }
         public DbSet<Barcode> Barcodes { get; set; }
+        public DbSet<Client> Clients { get; set; }
     }
 }

@@ -57,7 +57,7 @@ namespace Dot.API.Controllers
         {
             var userToken = Token.ExtractToken(accessToken);
             Token.ValidateToken(userToken, userid);
-            return await Mediator.Send(new GetWalletBalance { UserId = userid, StudentId = studentid });
+            return await Mediator.Send(new GetWalletBalance { UserId = userid });
         }
 
         [HttpGet("getwalletdetails/{userid}/{studentid}")]
@@ -66,7 +66,7 @@ namespace Dot.API.Controllers
         {
             var userToken = Token.ExtractToken(accessToken);
             Token.ValidateToken(userToken, userid);
-            return await Mediator.Send(new GetWalletDetails { UserId = userid, StudentId = studentid });
+            return await Mediator.Send(new GetWalletDetails { UserId = userid });
         }
     }
 }

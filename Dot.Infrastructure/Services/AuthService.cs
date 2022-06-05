@@ -1,6 +1,7 @@
 ﻿using Dot.Application.Interfaces;
 using Dot.Application.ResponseModel;
 using Dot.Core.Entities;
+using Dot.Core.Entities.MerchantSide;
 using Dot.Core.Enums;
 using Dot.Core.ViewModels;
 using Dot.Infrastructure.Data;
@@ -60,6 +61,70 @@ namespace Dot.Infrastructure.Services
         public Task<ResultResponse> ChangeUserStatusAsync(User user)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<ResultResponse> CreateClientAsync(Client client, string password)
+        {
+            try
+            {
+                var existingClient = await _userManager.FindByEmailAsync(client.CompanyEmail);
+                if(existingClient != null)
+                {
+                    return ResultResponse.Failure("Client with that email already exist");
+                }
+
+                var newClient = new ApplicationUser
+                {
+                    UserName = client.CompanyEmail,
+                    FullName = client.FullName,
+                    Email = client.CompanyEmail,
+                    CompanyName = client.CompanyName,
+                    Country = client.Country,
+                    BusinessRegNo = client.BusinessRegNo,
+                    PhoneNumber = client.PhoneNumber,
+                    Role = client.Role,
+                    EmailConfirmed = true,
+                    NormalizedEmail = client.CompanyEmail,
+                    ParentName = client.ParentFullName
+                };
+
+                var result = await _userManager.CreateAsync(newClient, password);
+                if (!result.Succeeded)
+                {
+                    var errors = result.Errors.Select(c => c.Description);
+                    return ResultResponse.Failure(errors);
+                }
+
+                newClient.UserId = newClient.Id;
+                await _userManager.UpdateAsync(newClient);
+
+                var businessClient = new Client
+                {
+                    FullName = client.FullName,
+                    CompanyEmail = client.CompanyEmail,
+                    CompanyName = client.CompanyName,
+                    Country = client.Country,
+                    PhoneNumber = client.PhoneNumber,
+                    BusinessRegNo = client.BusinessRegNo,
+                    Role = client.Role,
+                    ComapnySector = client.ComapnySector,
+                    UserId = newClient.Id,
+                    Status = Status.Active,
+                    StatusDesc = Status.Active.ToString(),
+                    ParentId = client.ParentId,
+                    ParentFullName = client.ParentFullName
+                };
+
+                await _context.Clients.AddAsync(businessClient);
+                await _context.SaveChangesAsync();
+
+                return ResultResponse.Success($"{businessClient.UserId}", businessClient.UserId);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public async Task<ResultResponse> CreateUserAsync(User user)
@@ -199,7 +264,7 @@ namespace Dot.Infrastructure.Services
             }
         }
 
-        public async Task<ResultResponse> loginAsync(string email, string password)
+        public async Task<ResultResponse> loginAsync(string email, string password, UserType userType)
         {
             try
             {

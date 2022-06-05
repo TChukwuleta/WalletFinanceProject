@@ -22,9 +22,46 @@ namespace Dot.Infrastructure.Services
             /*_cloudinary = cloudinary;*/
         }
 
-        public Task<string> FromBase64ToFile(string base64File, string filename)
+        public async Task<string> FromBase64ToFile(string base64File, string filename)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var fileLocation = "";
+                if (!string.IsNullOrEmpty(base64File))
+                {
+                    if (base64File.Contains("https:"))
+                    {
+                        return base64File;
+                    }
+                    var imagebytes = Convert.FromBase64String(base64File);
+                    if(imagebytes.Length > 0)
+                    {
+                        string file = Path.Combine(Directory.GetCurrentDirectory(), filename);
+                        using (var stream = new FileStream(file, FileMode.Create))
+                        {
+                            stream.Write(imagebytes, 0, imagebytes.Length);
+                            stream.Flush();
+                        }
+                        fileLocation = file;
+                    }
+                    else
+                    {
+                        return "";
+                    }
+
+                }
+                else
+                {
+                    return "";
+                }
+
+                return fileLocation;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public async Task<string> UploadImage(string username, string userid)

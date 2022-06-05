@@ -1,4 +1,6 @@
 ﻿using Dot.Application.ResponseModel;
+using Dot.Core.Entities;
+using Dot.Core.Enums;
 using Dot.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +15,7 @@ namespace Dot.Infrastructure.Application.WalletQueries
     public class GetWalletDetails : IRequest<ResultResponse>
     {
         public string UserId { get; set; }
-        public string StudentId { get; set; }
+        public UserType UserType { get; set; }
     }
 
     public class GetWalletDetailsHandler : IRequestHandler<GetWalletDetails, ResultResponse>
@@ -27,7 +29,19 @@ namespace Dot.Infrastructure.Application.WalletQueries
         {
             try
             {
-                var userWallet = await _context.Wallets.Where(c => c.UserId == request.UserId && c.StudentId == request.StudentId).FirstOrDefaultAsync();
+                var userWallet = new Wallet();
+                switch (request.UserType)
+                {
+                    case UserType.Student:
+                        userWallet = await _context.Wallets.Where(c => c.UserId == request.UserId && c.UserType == UserType.Student).FirstOrDefaultAsync();
+                        break;
+                    case UserType.Client:
+                        userWallet = await _context.Wallets.Where(c => c.UserId == request.UserId && c.UserType == UserType.Client).FirstOrDefaultAsync();
+                        break;
+                    default:
+                        return ResultResponse.Failure("Invalid user type");
+                        break;
+                }
                 if (userWallet == null)
                 {
                     return ResultResponse.Failure("Invalid wallet user");

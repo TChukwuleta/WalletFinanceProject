@@ -21,5 +21,13 @@ namespace Dot.Core.Entities
         public string StatusDesc { get; set; }
         public DateTime CreatedDate { get; set; }
         public string UserId { get; set; }
+
+        public string FullName { get; set; }
+        public string CompanyName { get; set; }
+        public string Country { get; set; }
+        public string PhoneNumber { get; set; }
+        public string BusinessRegNo { get; set; }
+        public string Role { get; set; }
+        public string ParentName { get; set; }
     }
 }

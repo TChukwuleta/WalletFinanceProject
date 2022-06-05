@@ -15,6 +15,7 @@ namespace Dot.Application.UserCommand.LoginUser
     {
         public string Email { get; set; }
         public string Password { get; set; }
+        public UserType UserType { get; set; }
     }
 
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, ResultResponse>
@@ -28,7 +29,7 @@ namespace Dot.Application.UserCommand.LoginUser
         {
             try
             {
-                var result = await _authService.loginAsync(request.Email, request.Password);
+                var result = await _authService.loginAsync(request.Email, request.Password, request.UserType);
                 return ResultResponse.Success(result);
             }
             catch (Exception ex)

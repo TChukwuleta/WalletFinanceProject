@@ -1,5 +1,6 @@
 ﻿using Dot.Application.ResponseModel;
 using Dot.Core.Entities;
+using Dot.Core.Enums;
 using Dot.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +14,11 @@ namespace Dot.Infrastructure.Application.WalletCommand
 {
     public class CreateWalletCommand : IRequest<ResultResponse>
     {
-        public string StudentId { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string AccountName { get; set; }
         public string UserId { get; set; }
+        public UserType UserType { get; set; }
     }
 
     public class CreateWalletCommandHandler : IRequestHandler<CreateWalletCommand, ResultResponse>
@@ -46,11 +47,11 @@ namespace Dot.Infrastructure.Application.WalletCommand
                     WalletAccountNumber = key.ToString(),
                     ClosingBalance = 0,
                     Balance = 0,
-                    StudentId = request.StudentId,
                     Email = request.Email,
                     PhoneNumber = request.PhoneNumber,
                     UserId = request.UserId,
-                    UserName = $"{findUser.FirstName} {findUser.LastName}" // Let user name be a combo of first and last name
+                    UserName = $"{findUser.FirstName} {findUser.LastName}", // Let user name be a combo of first and last name
+                    UserType = UserType.Student
                 };
 
                 await _context.Wallets.AddAsync(newWallet);

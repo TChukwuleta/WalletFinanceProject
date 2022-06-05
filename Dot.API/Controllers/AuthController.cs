@@ -2,25 +2,41 @@
 using Dot.Application.ResponseModel;
 using Dot.Application.UserCommand.ChangeUserPassword;
 using Dot.Application.UserCommand.CreateUser;
+using Dot.Application.UserCommand.ForgotPassword;
 using Dot.Application.UserCommand.LoginUser;
-using Dot.Core.Entities;
+using Dot.Infrastructure.Application.MerchantSide.Authentication.Command;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DotApplication.Controllers
+namespace Dot.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ApiControllerBase
+    public class AuthController : ApiController
     {
         private readonly IAuthService _authService;
-        public UserController(IAuthService authService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
 
-        [HttpPost("registeruser")]
-        public async Task<ActionResult<ResultResponse>> RegisterUser(CreateStudentCommand command)
+        [HttpPost("registerstudent")]
+        public async Task<ActionResult<ResultResponse>> RegisterUser(CreateStudentCommand command) 
+        {
+            try
+            {
+                return await Mediator.Send(command);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
+        [HttpPost("registermerchant")]
+        public async Task<ActionResult<ResultResponse>> RegisterMerchant(CreateClientCommand command)
         {
             try
             {
@@ -50,6 +66,35 @@ namespace DotApplication.Controllers
 
         [HttpPost("resetpassword")]
         public async Task<ActionResult<ResultResponse>> ResetPassword(ChangeUserPasswordCommand command)
+        {
+            try
+            {
+                return await Mediator.Send(command);
+            }
+            catch (Exception ex)
+            {
+
+                throw; 
+            }
+        }
+
+
+        [HttpPost("forgotpassword")]
+        public async Task<ActionResult<ResultResponse>> ForgotPassword(CreateForgotPasswordCommand command)
+        {
+            try
+            {
+                return await Mediator.Send(command);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost("forgotpasswordvalidation")]
+        public async Task<ActionResult<ResultResponse>> ForgotPasswordValidation(ValidateForgotPasswordCommand command)
         {
             try
             {

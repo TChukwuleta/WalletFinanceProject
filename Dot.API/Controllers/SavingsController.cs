@@ -118,9 +118,17 @@ namespace Dot.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResultResponse>> GetActiveAutoSave(string userid, string studentid)
         {
-            var userToken = Token.ExtractToken(accessToken);
-            Token.ValidateToken(userToken, userid);
-            return await Mediator.Send(new GetAllActiveAutoSaveQuery { UserId = userid, StudentId = studentid });
+            try
+            {
+                var userToken = Token.ExtractToken(accessToken);
+                Token.ValidateToken(userToken, userid);
+                return await Mediator.Send(new GetAllActiveAutoSaveQuery { UserId = userid, StudentId = studentid });
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
 
@@ -128,9 +136,17 @@ namespace Dot.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResultResponse>> GetAutoSave(string userid, string studentid)
         {
-            var userToken = Token.ExtractToken(accessToken);
-            Token.ValidateToken(userToken, userid);
-            return await Mediator.Send(new GetAllAutoSaveByUserQuery { UserId = userid, StudentId = studentid });
+            try
+            {
+                var userToken = Token.ExtractToken(accessToken);
+                Token.ValidateToken(userToken, userid);
+                return await Mediator.Send(new GetAllAutoSaveByUserQuery { UserId = userid, StudentId = studentid });
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
 
@@ -172,19 +188,30 @@ namespace Dot.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResultResponse>> GetActiveSaveAsYouGo(string userid, string studentid)
         {
-            var userToken = Token.ExtractToken(accessToken);
-            Token.ValidateToken(userToken, userid);
-            return await Mediator.Send(new GetAllActiveSaveAsYouGoByUserQuery { UserId = userid, StudentId = studentid });
+            try
+            {
+                var userToken = Token.ExtractToken(accessToken);
+                Token.ValidateToken(userToken, userid);
+                return await Mediator.Send(new GetAllActiveSaveAsYouGoByUserQuery { UserId = userid, StudentId = studentid });
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
 
         [HttpGet("getsaveasyougo/{userid}/{studentid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResultResponse>> GetSaveAsYouGo(string userid, string studentid)
-        {
-            var userToken = Token.ExtractToken(accessToken);
-            Token.ValidateToken(userToken, userid);
-            return await Mediator.Send(new GetAllSaveAsYouGoByUserQuery { UserId = userid, StudentId = studentid });
+        {try
+            {
+                var userToken = Token.ExtractToken(accessToken);
+                Token.ValidateToken(userToken, userid);
+                return await Mediator.Send(new GetAllSaveAsYouGoByUserQuery { UserId = userid, StudentId = studentid });
+            }
+            catch (Exception ex) { throw ex; }
         }
 
 
@@ -241,19 +268,30 @@ namespace Dot.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResultResponse>> GetActiveLockAndSave(string userid, string studentid)
         {
-            var userToken = Token.ExtractToken(accessToken);
-            Token.ValidateToken(userToken, userid);
-            return await Mediator.Send(new GetAllActiveLockAndSaveByUserQuery { UserId = userid, StudentId = studentid });
+            try
+            {
+                var userToken = Token.ExtractToken(accessToken);
+                Token.ValidateToken(userToken, userid);
+                return await Mediator.Send(new GetAllActiveLockAndSaveByUserQuery { UserId = userid, StudentId = studentid });
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
 
         [HttpGet("getlockandsave/{userid}/{studentid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResultResponse>> GetLockAndSave(string userid, string studentid)
-        {
-            var userToken = Token.ExtractToken(accessToken);
-            Token.ValidateToken(userToken, userid);
-            return await Mediator.Send(new GetAllLockAndSaveByUserQuery { UserId = userid, StudentId = studentid });
+        {try
+            {
+                var userToken = Token.ExtractToken(accessToken);
+                Token.ValidateToken(userToken, userid);
+                return await Mediator.Send(new GetAllLockAndSaveByUserQuery { UserId = userid, StudentId = studentid });
+            }
+            catch (Exception ex) { throw ex; }
         }
 
 
@@ -262,9 +300,17 @@ namespace Dot.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResultResponse>> GetAllSavings(string userid, string studentid)
         {
-            var userToken = Token.ExtractToken(accessToken);
-            Token.ValidateToken(userToken, userid);
-            return await Mediator.Send(new GetAllSavingsByUserQuery { UserId = userid, StudentId = studentid });
+            try
+            {
+                var userToken = Token.ExtractToken(accessToken);
+                Token.ValidateToken(userToken, userid);
+                return await Mediator.Send(new GetAllSavingsByUserQuery { UserId = userid, StudentId = studentid });
+            }
+            catch (Exception ex)
+            {
+
+                throw ex; 
+            }
         }
     }
 }

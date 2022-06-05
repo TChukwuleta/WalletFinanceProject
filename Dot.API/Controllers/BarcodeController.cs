@@ -10,7 +10,7 @@ namespace Dot.API.Controllers
     [ApiController]
     public class BarcodeController : ApiController
     {
-        private readonly IHttpContextAccessor _contextAccessor;
+        protected readonly IHttpContextAccessor _contextAccessor;
         private readonly string accessToken;
 
         public BarcodeController(IHttpContextAccessor contextAccessor)
@@ -22,6 +22,22 @@ namespace Dot.API.Controllers
 
         [HttpPost("generatebarcode")]
         public async Task<ActionResult<ResultResponse>> GenerateBarcode(GenerateBarcodeCommand command)
+        {
+            try
+            {
+                var userToken = Token.ExtractToken(accessToken);
+                Token.ValidateToken(userToken, command.UserId);
+                return await Mediator.Send(command);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost("scantopay")]
+        public async Task<ActionResult<ResultResponse>> ScanToPay(ScanToPayCommand command)
         {
             try
             {
