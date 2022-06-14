@@ -12,7 +12,10 @@ Student Features: The students features allows student to send/transfer money to
 Client Features: The clients are like the merchant/store owners. As a merchant I can have multiple stores operating individually although under me (more like a virtual system). Stores can easily receive funds from students within and around campuses. The stores can also via the platform, pay for its expenses. 
 
 
+
 Still to come:
 
 Bills payment for both students and clients.
+
+
 Direct school fees payment (somewhat like remita).
